@@ -6,9 +6,15 @@ import (
   "os"
   "strings"
   "sort"
+  "io/ioutil"
+
 
   "github.com/urfave/cli/v2"
   "gopkg.in/src-d/go-git.v4"
+
+
+  "golang.org/x/crypto/ssh"
+  ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 )
 
 //clone
@@ -38,14 +44,37 @@ func main() {
         Usage:   "complete a task on the list",
         Action:  func(c *cli.Context) error {
 
-          Info("git clone https://github.com/src-d/go-git")
+          pem, _ := ioutil.ReadFile("/Users/pim/.ssh/id_rsa-annemarie-vega")
+          signer, err := ssh.ParsePrivateKey(pem)
+          if err != nil {
+            panic("ramp")
+            }
 
-          _, err := git.PlainClone("/tmp/foo", false, &git.CloneOptions{
-            URL:      "https://github.com/src-d/go-git",
+          /*
+          storage := memory.NewStorage()
+          repo, err := git.Clone(
+            storage,
+            nil,
+            &git.CloneOptions{
+              URL:  "git@github.com:...../......git",
+              Auth: auth,
+            },
+          )
+          */
+          url := c.Args().Get(0)
+          directory := c.Args().Get(1)
+
+          auth := &ssh2.PublicKeys{User: "git", Signer: signer}
+
+          Info("git clone %s %s", url, directory)
+
+          _, err2 := git.PlainClone(directory, false, &git.CloneOptions{
+            URL:      url,
             Progress: os.Stdout,
+            Auth: auth,
           })
 
-          CheckIfError(err)
+          CheckIfError(err2)
 
           return nil
         },
