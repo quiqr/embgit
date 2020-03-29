@@ -8,63 +8,51 @@ import (
   "sort"
   "io/ioutil"
 
-
   "github.com/urfave/cli/v2"
   "gopkg.in/src-d/go-git.v4"
-
+  "gopkg.in/src-d/go-git.v4/plumbing/transport"
 
   "golang.org/x/crypto/ssh"
   ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 )
+func setAuth(keyfilepath string) transport.AuthMethod {
+  //var auth transport.AuthMethod
 
-//clone
-//add
-//commit
-//push
-//ssh -i
+  if keyfilepath != "" {
+
+    pem, _ := ioutil.ReadFile(keyfilepath)
+    signer, err := ssh.ParsePrivateKey(pem)
+    if err != nil {
+      fmt.Println("Could not read keyfile")
+      os.Exit(1);
+    }
+    return &ssh2.PublicKeys{User: "git", Signer: signer}
+
+  } else {
+    return nil
+  }
+
+}
 
 func main() {
 
   app := &cli.App{
-    Flags: []cli.Flag{
-      &cli.StringFlag{
-        Name:  "lang, l",
-        Value: "english",
-        Usage: "Language for the greeting",
-      },
-      &cli.StringFlag{
-        Name:  "config, c",
-        Usage: "Load configuration from `FILE`",
-      },
-    },
     Commands: []*cli.Command{
       {
         Name:    "clone",
-        Aliases: []string{"c"},
         Usage:   "complete a task on the list",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:  "ssh-key",
+            Aliases: []string{"i"},
+            Usage: "alternative ssh-key from `FILE`",
+          },
+        },
         Action:  func(c *cli.Context) error {
 
-          pem, _ := ioutil.ReadFile("/Users/pim/.ssh/id_rsa-annemarie-vega")
-          signer, err := ssh.ParsePrivateKey(pem)
-          if err != nil {
-            panic("ramp")
-            }
-
-          /*
-          storage := memory.NewStorage()
-          repo, err := git.Clone(
-            storage,
-            nil,
-            &git.CloneOptions{
-              URL:  "git@github.com:...../......git",
-              Auth: auth,
-            },
-          )
-          */
           url := c.Args().Get(0)
           directory := c.Args().Get(1)
-
-          auth := &ssh2.PublicKeys{User: "git", Signer: signer}
+          auth := setAuth(c.String("ssh-key"))
 
           Info("git clone %s %s", url, directory)
 
@@ -80,8 +68,14 @@ func main() {
         },
       },
       {
+        Name:    "commit",
+        Usage:   "complete a task on the list",
+        Action:  func(c *cli.Context) error {
+          return nil
+        },
+      },
+      {
         Name:    "add",
-        Aliases: []string{"a"},
         Usage:   "add a task to the list",
         Action:  func(c *cli.Context) error {
           return nil
@@ -102,28 +96,28 @@ func main() {
 // CheckArgs should be used to ensure the right command line arguments are
 // passed before executing an example.
 func CheckArgs(arg ...string) {
-	if len(os.Args) < len(arg)+1 {
-		Warning("Usage: %s %s", os.Args[0], strings.Join(arg, " "))
-		os.Exit(1)
-	}
+  if len(os.Args) < len(arg)+1 {
+    Warning("Usage: %s %s", os.Args[0], strings.Join(arg, " "))
+    os.Exit(1)
+  }
 }
 
 // CheckIfError should be used to naively panics if an error is not nil.
 func CheckIfError(err error) {
-	if err == nil {
-		return
-	}
+  if err == nil {
+    return
+  }
 
-	fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
-	os.Exit(1)
+  fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
+  os.Exit(1)
 }
 
 // Info should be used to describe the example commands that are about to run.
 func Info(format string, args ...interface{}) {
-	fmt.Printf("\x1b[34;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
+  fmt.Printf("\x1b[34;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
 
 // Warning should be used to display a warning
 func Warning(format string, args ...interface{}) {
-	fmt.Printf("\x1b[36;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
+  fmt.Printf("\x1b[36;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
