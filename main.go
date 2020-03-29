@@ -103,17 +103,6 @@ func main() {
           w, err := r.Worktree()
           CheckIfError(err)
 
-          // We can verify the current status of the worktree using the method Status.
-          /*
-          Info("git status --porcelain")
-          status, err := w.Status()
-          CheckIfError(err)
-          fmt.Println(status)
-          */
-
-          // Commits the current staging area to the repository, with the new file
-          // just created. We should provide the object.Signature of Author of the
-          // commit.
           commit, err := w.Commit(c.String("message"), &git.CommitOptions{
             Author: &object.Signature{
               Name:  c.String("author-name"),
@@ -124,7 +113,6 @@ func main() {
 
           CheckIfError(err)
 
-          // Prints the current HEAD to verify that all worked well.
           Info("git show -s")
           obj, err := r.CommitObject(commit)
           CheckIfError(err)
@@ -158,7 +146,27 @@ func main() {
       {
         Name:    "push",
         Usage:   "push to remote",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:  "ssh-key",
+            Aliases: []string{"i"},
+            Usage: "alternative ssh-key from `FILE`",
+          },
+        },
         Action:  func(c *cli.Context) error {
+          directory := c.Args().Get(0)
+          auth := setAuth(c.String("ssh-key"))
+
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          Info("git push")
+          // push using default options
+          err = r.Push(&git.PushOptions{
+            Auth: auth,
+          })
+          CheckIfError(err)
+
           return nil
         },
       },

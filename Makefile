@@ -37,9 +37,10 @@ inttest:
 #				@rm -Rfv /tmp/test
 #				./embgit clone git@github.com:mipmip/linny.vim.git /tmp/test
 				@rm -Rfv /tmp/test
-				./embgit clone git@gitlab.lingewoud.net:Sandbox/testembgit.git /tmp/test
+				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:Sandbox/testembgit.git /tmp/test
 				echo ".\n" >> /tmp/test/test
 				mkdir /tmp/test/sub
 				touch /tmp/test/sub/yoehoe
 				./embgit alladd /tmp/test
 				./embgit commit -n "Pim Snel" -e "pim@lingewoud.nl" -m "a message" /tmp/test
+				./embgit push -i ~/.ssh/id_rsa-annemarie-vega /tmp/test
