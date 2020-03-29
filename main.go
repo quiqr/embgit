@@ -7,10 +7,12 @@ import (
   "strings"
   "sort"
   "io/ioutil"
+  "time"
 
   "github.com/urfave/cli/v2"
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing/transport"
+  "gopkg.in/src-d/go-git.v4/plumbing/object"
 
   "golang.org/x/crypto/ssh"
   ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
@@ -69,14 +71,66 @@ func main() {
       },
       {
         Name:    "commit",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:  "message",
+            Aliases: []string{"m"},
+            Usage: "commit message `MESSAGE`",
+            Required: true,
+          },
+        },
         Usage:   "complete a task on the list",
         Action:  func(c *cli.Context) error {
+
+          directory := c.Args().Get(0)
+
+          Info("commit with message: %s in %s", c.String("message"), directory)
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          // We can verify the current status of the worktree using the method Status.
+          Info("git status --porcelain")
+          status, err := w.Status()
+          CheckIfError(err)
+
+          fmt.Println(status)
+
+          // Commits the current staging area to the repository, with the new file
+          // just created. We should provide the object.Signature of Author of the
+          // commit.
+          commit, err := w.Commit(c.String("message"), &git.CommitOptions{
+            Author: &object.Signature{
+              Name:  "John Doe",
+              Email: "john@doe.org",
+              When:  time.Now(),
+            },
+          })
+
+          CheckIfError(err)
+
+          // Prints the current HEAD to verify that all worked well.
+          Info("git show -s")
+          obj, err := r.CommitObject(commit)
+          CheckIfError(err)
+
+          fmt.Println(obj)
+
           return nil
         },
       },
       {
         Name:    "add",
         Usage:   "add a task to the list",
+        Action:  func(c *cli.Context) error {
+          return nil
+        },
+      },
+      {
+        Name:    "push",
+        Usage:   "push to remote",
         Action:  func(c *cli.Context) error {
           return nil
         },

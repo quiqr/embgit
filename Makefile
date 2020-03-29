@@ -30,9 +30,15 @@ docker-build:
 				docker run --rm -it -v "$(GOPATH)":/go -w /go/src/bitbucket.org/rsohlich/makepost golang:latest go build -o "$(BINARY_UNIX)" -v
 
 inttest:
+#				@rm -Rfv /tmp/test
+#				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:servers/scio-site-monitor.git /tmp/test
+#				@rm -Rfv /tmp/test
+#				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@github.com:mipmip/linny.vim.git /tmp/test
+#				@rm -Rfv /tmp/test
+#				./embgit clone git@github.com:mipmip/linny.vim.git /tmp/test
 				@rm -Rfv /tmp/test
-				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:servers/scio-site-monitor.git /tmp/test
-				@rm -Rfv /tmp/test
-				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@github.com:mipmip/linny.vim.git /tmp/test
-				@rm -Rfv /tmp/test
-				./embgit clone git@github.com:mipmip/linny.vim.git /tmp/test
+				./embgit clone git@gitlab.lingewoud.net:Sandbox/testembgit.git /tmp/test
+#				echo ".\n" >> /tmp/test/test
+#				./embgit commit /tmp/test/*
+				echo ".\n" >> /tmp/test/test
+				./embgit commit -m "a message" /tmp/test
