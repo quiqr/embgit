@@ -11,6 +11,8 @@ BINARY_UNIX=$(BINARY_NAME)_unix
 all: test build
 build:
 				GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
+buildx:
+				gox ./
 test:
 				GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...
 clean:
