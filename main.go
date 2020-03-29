@@ -78,8 +78,20 @@ func main() {
             Usage: "commit message `MESSAGE`",
             Required: true,
           },
+          &cli.StringFlag{
+            Name:  "author-email",
+            Aliases: []string{"e"},
+            Usage: "commit author `EMAIL`",
+            Required: true,
+          },
+          &cli.StringFlag{
+            Name:  "author-name",
+            Aliases: []string{"n"},
+            Usage: "commit author `NAME`",
+            Required: true,
+          },
         },
-        Usage:   "complete a task on the list",
+        Usage:   "commit",
         Action:  func(c *cli.Context) error {
 
           directory := c.Args().Get(0)
@@ -92,19 +104,20 @@ func main() {
           CheckIfError(err)
 
           // We can verify the current status of the worktree using the method Status.
+          /*
           Info("git status --porcelain")
           status, err := w.Status()
           CheckIfError(err)
-
           fmt.Println(status)
+          */
 
           // Commits the current staging area to the repository, with the new file
           // just created. We should provide the object.Signature of Author of the
           // commit.
           commit, err := w.Commit(c.String("message"), &git.CommitOptions{
             Author: &object.Signature{
-              Name:  "John Doe",
-              Email: "john@doe.org",
+              Name:  c.String("author-name"),
+              Email: c.String("author-email"),
               When:  time.Now(),
             },
           })
@@ -122,9 +135,23 @@ func main() {
         },
       },
       {
-        Name:    "add",
-        Usage:   "add a task to the list",
+        Name:    "alladd",
+        Usage:   "alladd",
         Action:  func(c *cli.Context) error {
+
+          directory := c.Args().Get(0)
+
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          Info("git add all new files")
+
+          _, err = w.Add(".")
+          CheckIfError(err)
+
           return nil
         },
       },
