@@ -13,6 +13,11 @@ build:
 				GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
 buildx:
 				gox ./
+cptosukoh:
+				cp embgit_darwin_amd64 ~/cElectronApps/sukoh/resources/mac/embgit
+				cp embgit_windows_amd64.exe ~/cElectronApps/sukoh/resources/win/embgit.exe
+				cp embgit_linux_amd64 ~/cElectronApps/sukoh/resources/linux/embgit
+
 test:
 				GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...
 clean:
