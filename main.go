@@ -15,7 +15,7 @@ import (
   "golang.org/x/crypto/ssh"
   ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
 )
-func setAuth(keyfilepath string) transport.AuthMethod {
+func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
 
   if keyfilepath != "" {
@@ -26,7 +26,11 @@ func setAuth(keyfilepath string) transport.AuthMethod {
       fmt.Println("Could not read keyfile")
       os.Exit(1);
     }
-    return &ssh2.PublicKeys{User: "git", Signer: signer}
+    auth := &ssh2.PublicKeys{User: "git", Signer: signer}
+    if(ignoreHostkey){
+      auth.HostKeyCallback = ssh.InsecureIgnoreHostKey()
+    }
+    return auth;
 
   } else {
     return nil
@@ -47,12 +51,13 @@ func main() {
             Aliases: []string{"i"},
             Usage: "alternative ssh-key from `FILE`",
           },
+          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
         },
         Action:  func(c *cli.Context) error {
 
           url := c.Args().Get(0)
           directory := c.Args().Get(1)
-          auth := setAuth(c.String("ssh-key"))
+          auth := setAuth(c.String("ssh-key"), c.Bool("insecure"))
 
           Info("git clone %s %s", url, directory)
 
