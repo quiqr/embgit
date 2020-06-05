@@ -176,6 +176,14 @@ func main() {
           return nil
         },
       },
+      {
+        Name:    "version",
+        Usage:   "display version",
+        Action:  func(c *cli.Context) error {
+          Info("embgit 0.1.3, Copyright Pim Snel pim@lingewoud.nl 2020, PoppyGo")
+          return nil
+        },
+      },
     },
   }
 
