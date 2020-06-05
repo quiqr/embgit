@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/kr/pretty v0.2.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/src-d/go-git v4.7.0+incompatible // indirect

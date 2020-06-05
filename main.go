@@ -7,10 +7,12 @@ import (
   "strings"
   "sort"
   "io/ioutil"
+  "time"
 
   "github.com/urfave/cli/v2"
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing/transport"
+  "gopkg.in/src-d/go-git.v4/plumbing/object"
 
   "golang.org/x/crypto/ssh"
   ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
@@ -74,15 +76,103 @@ func main() {
       },
       {
         Name:    "commit",
-        Usage:   "complete a task on the list",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:  "message",
+            Aliases: []string{"m"},
+            Usage: "commit message `MESSAGE`",
+            Required: true,
+          },
+          &cli.StringFlag{
+            Name:  "author-email",
+            Aliases: []string{"e"},
+            Usage: "commit author `EMAIL`",
+            Required: true,
+          },
+          &cli.StringFlag{
+            Name:  "author-name",
+            Aliases: []string{"n"},
+            Usage: "commit author `NAME`",
+            Required: true,
+          },
+        },
+        Usage:   "commit",
         Action:  func(c *cli.Context) error {
+
+          directory := c.Args().Get(0)
+
+          Info("commit with message: %s in %s", c.String("message"), directory)
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          commit, err := w.Commit(c.String("message"), &git.CommitOptions{
+            Author: &object.Signature{
+              Name:  c.String("author-name"),
+              Email: c.String("author-email"),
+              When:  time.Now(),
+            },
+          })
+
+          CheckIfError(err)
+
+          Info("git show -s")
+          obj, err := r.CommitObject(commit)
+          CheckIfError(err)
+
+          fmt.Println(obj)
+
           return nil
         },
       },
       {
-        Name:    "add",
-        Usage:   "add a task to the list",
+        Name:    "alladd",
+        Usage:   "alladd",
         Action:  func(c *cli.Context) error {
+
+          directory := c.Args().Get(0)
+
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          Info("git add all new files")
+
+          _, err = w.Add(".")
+          CheckIfError(err)
+
+          return nil
+        },
+      },
+      {
+        Name:    "push",
+        Usage:   "push to remote",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:  "ssh-key",
+            Aliases: []string{"i"},
+            Usage: "alternative ssh-key from `FILE`",
+          },
+          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
+        },
+        Action:  func(c *cli.Context) error {
+          directory := c.Args().Get(0)
+          auth := setAuth(c.String("ssh-key"), c.Bool("insecure"))
+
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          Info("git push")
+          // push using default options
+          err = r.Push(&git.PushOptions{
+            Auth: auth,
+          })
+          CheckIfError(err)
+
           return nil
         },
       },

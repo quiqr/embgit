@@ -11,6 +11,13 @@ BINARY_UNIX=$(BINARY_NAME)_unix
 all: test build
 build:
 				GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
+buildx:
+				gox ./
+cptosukoh:
+				cp embgit_darwin_amd64 ~/cPoppyGo/sukoh/resources/mac/embgit
+				cp embgit_windows_amd64.exe ~/cPoppyGo/sukoh/resources/windows/embgit.exe
+				cp embgit_linux_amd64 ~/cPoppyGo/sukoh/resources/linux/embgit
+
 test:
 				GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...
 clean:
@@ -30,9 +37,17 @@ docker-build:
 				docker run --rm -it -v "$(GOPATH)":/go -w /go/src/bitbucket.org/rsohlich/makepost golang:latest go build -o "$(BINARY_UNIX)" -v
 
 inttest:
+#				@rm -Rfv /tmp/test
+#				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:servers/scio-site-monitor.git /tmp/test
+#				@rm -Rfv /tmp/test
+#				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@github.com:mipmip/linny.vim.git /tmp/test
+#				@rm -Rfv /tmp/test
+#				./embgit clone git@github.com:mipmip/linny.vim.git /tmp/test
 				@rm -Rfv /tmp/test
-				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:servers/scio-site-monitor.git /tmp/test
-				@rm -Rfv /tmp/test
-				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@github.com:mipmip/linny.vim.git /tmp/test
-				@rm -Rfv /tmp/test
-				./embgit clone git@github.com:mipmip/linny.vim.git /tmp/test
+				./embgit clone -i ~/.ssh/id_rsa-annemarie-vega git@gitlab.lingewoud.net:Sandbox/testembgit.git /tmp/test
+				echo ".\n" >> /tmp/test/test
+				mkdir /tmp/test/sub
+				touch /tmp/test/sub/yoehoe
+				./embgit alladd /tmp/test
+				./embgit commit -n "Pim Snel" -e "pim@lingewoud.nl" -m "a message" /tmp/test
+				./embgit push -i ~/.ssh/id_rsa-annemarie-vega /tmp/test
