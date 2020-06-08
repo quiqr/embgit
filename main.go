@@ -95,6 +95,7 @@ func main() {
             Usage: "commit author `NAME`",
             Required: true,
           },
+          &cli.BoolFlag{Name: "all", Aliases: []string{"a"}},
         },
         Usage:   "commit",
         Action:  func(c *cli.Context) error {
@@ -109,6 +110,7 @@ func main() {
           CheckIfError(err)
 
           commit, err := w.Commit(c.String("message"), &git.CommitOptions{
+            All:    c.Bool("all"),
             Author: &object.Signature{
               Name:  c.String("author-name"),
               Email: c.String("author-email"),
@@ -180,7 +182,7 @@ func main() {
         Name:    "version",
         Usage:   "display version",
         Action:  func(c *cli.Context) error {
-          Info("embgit 0.1.3, Copyright Pim Snel pim@lingewoud.nl 2020, PoppyGo")
+          Info("embgit 0.1.4, Copyright Pim Snel pim@lingewoud.nl 2020, PoppyGo")
           return nil
         },
       },

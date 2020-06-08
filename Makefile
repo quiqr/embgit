@@ -7,16 +7,17 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=embgit
 BINARY_UNIX=$(BINARY_NAME)_unix
+POPPYAPPDIR=~/cPoppyGo/poppygo-eletron-app
 
 all: test build
 build:
 				GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
 buildx:
 				gox ./
-cptosukoh:
-				cp embgit_darwin_amd64 ~/cPoppyGo/sukoh/resources/mac/embgit
-				cp embgit_windows_amd64.exe ~/cPoppyGo/sukoh/resources/windows/embgit.exe
-				cp embgit_linux_amd64 ~/cPoppyGo/sukoh/resources/linux/embgit
+cptopoppygopp:
+				cp embgit_darwin_amd64 $(POPPYAPPDIR)/resources/mac/embgit
+				cp embgit_windows_amd64.exe $(POPPYAPPDIR)/resources/windows/embgit.exe
+				cp embgit_linux_amd64 $(POPPYAPPDIR)/resources/linux/embgit
 
 test:
 				GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...

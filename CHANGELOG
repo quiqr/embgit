@@ -1,0 +1,6 @@
+# CHANGELOG
+
+## 0.1.4
+
+- Start using a changlog
+- implement -a flag for commit command
