@@ -16,6 +16,11 @@ import (
 
   "golang.org/x/crypto/ssh"
   ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
+
+  "crypto/rand"
+  "crypto/rsa"
+  "crypto/x509"
+  "encoding/pem"
 )
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
@@ -179,10 +184,39 @@ func main() {
         },
       },
       {
+        Name:    "keygen",
+        Usage:   "create passwordless ssl key pair",
+//        Flags: []cli.Flag{
+//          &cli.StringFlag{
+//            Name:  "filename",
+//            Aliases: []string{"f"},
+//            Usage: "alternative ssh-key from `FILE`",
+//          }
+//        },
+        Action:  func(c *cli.Context) error {
+          //directory := c.Args().Get(0)
+          //filename := c.String("filename"))
+
+          savePrivateFileTo := "./id_rsa_pogo"
+          savePublicFileTo := "./id_rsa_pogo.pub"
+          bitSize := 4096
+
+          privateKey, err := generatePrivateKey(bitSize)
+          publicKeyBytes, err := generatePublicKey(&privateKey.PublicKey)
+          privateKeyBytes := encodePrivateKeyToPEM(privateKey)
+
+          err = writeKeyToFile(privateKeyBytes, savePrivateFileTo)
+          err = writeKeyToFile([]byte(publicKeyBytes), savePublicFileTo)
+          CheckIfError(err)
+
+          return nil
+        },
+      },
+      {
         Name:    "version",
         Usage:   "display version",
         Action:  func(c *cli.Context) error {
-          Info("embgit 0.1.4, Copyright Pim Snel pim@lingewoud.nl 2020, PoppyGo")
+          Info("embgit 0.2.0, Copyright Pim Snel pim@lingewoud.nl 2020, PoppyGo B.V.")
           return nil
         },
       },
@@ -225,4 +259,65 @@ func Info(format string, args ...interface{}) {
 // Warning should be used to display a warning
 func Warning(format string, args ...interface{}) {
   fmt.Printf("\x1b[36;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
+}
+
+// generatePrivateKey creates a RSA Private Key of specified byte size
+func generatePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
+  // Private Key generation
+  privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
+  if err != nil {
+    return nil, err
+  }
+
+  // Validate Private Key
+  err = privateKey.Validate()
+  if err != nil {
+    return nil, err
+  }
+
+  log.Println("Private Key generated")
+  return privateKey, nil
+}
+
+// encodePrivateKeyToPEM encodes Private Key from RSA to PEM format
+func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
+  // Get ASN.1 DER format
+  privDER := x509.MarshalPKCS1PrivateKey(privateKey)
+
+  // pem.Block
+  privBlock := pem.Block{
+    Type:    "RSA PRIVATE KEY",
+    Headers: nil,
+    Bytes:   privDER,
+  }
+
+  // Private key in PEM format
+  privatePEM := pem.EncodeToMemory(&privBlock)
+
+  return privatePEM
+}
+
+// generatePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
+// returns in the format "ssh-rsa ..."
+func generatePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
+  publicRsaKey, err := ssh.NewPublicKey(privatekey)
+  if err != nil {
+    return nil, err
+  }
+
+  pubKeyBytes := ssh.MarshalAuthorizedKey(publicRsaKey)
+
+  log.Println("Public key generated")
+  return pubKeyBytes, nil
+}
+
+// writePemToFile writes keys to a file
+func writeKeyToFile(keyBytes []byte, saveFileTo string) error {
+  err := ioutil.WriteFile(saveFileTo, keyBytes, 0600)
+  if err != nil {
+    return err
+  }
+
+  log.Printf("Key saved to: %s", saveFileTo)
+  return nil
 }

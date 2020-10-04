@@ -1,5 +1,6 @@
 # EMBGIT
 
+Embgit implements git add ssl functions in an cross platform cli application.
 Embgit is a poppygo project.
 
 ## Build
