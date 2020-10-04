@@ -13,10 +13,13 @@ all: test build
 build:
 				GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
 buildx:
-				gox ./
+				gox -osarch="linux/amd64" ./
+				gox -osarch="windows/amd64" ./
+				gox -osarch="darwin/amd64" ./
+
 cptopoppygopp:
 				cp embgit_darwin_amd64 $(POPPYAPPDIR)/resources/mac/embgit
-				cp embgit_windows_amd64.exe $(POPPYAPPDIR)/resources/windows/embgit.exe
+				cp embgit_windows_amd64.exe $(POPPYAPPDIR)/resources/win/embgit.exe
 				cp embgit_linux_amd64 $(POPPYAPPDIR)/resources/linux/embgit
 
 test:
