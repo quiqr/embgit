@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.1
+
+- get fingerprint from private key
+
 ## 0.2.0
 
 - create ssl keypairs
