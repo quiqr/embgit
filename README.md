@@ -1,7 +1,21 @@
 # EMBGIT
 
-Embgit implements git add ssl functions in an cross platform cli application.
-Embgit is a poppygo project.
+Embgit is a [PoppyGo](https://poppygo.io) project.
+
+Embgit is an minimal git client made in go. It's main goals are:
+
+- fat binary, dependancy free
+- support for all main platforms
+- clone, add, commit, push
+- use ssh-keys for identification
+
+# Features
+
+- [x] git clone
+- [x] git add
+- [x] git commit
+- [x] git push
+- [x] option for alternative ssh-key
 
 ## Build
 
