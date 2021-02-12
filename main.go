@@ -22,7 +22,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 )
-const version = "v0.2.5"
+const version = "v0.2.6"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
 	//var auth transport.AuthMethod
