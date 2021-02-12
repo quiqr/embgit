@@ -8,6 +8,7 @@ GOGET=$(GOCMD) get
 BINARY_NAME=embgit
 BINARY_UNIX=$(BINARY_NAME)_unix
 POPPYAPPDIR=~/cPoppyGo/poppygo-eletron-app
+VERSION := $(shell grep version main.go|head -n1 | tr -d \"|cut -dv -f3)
 
 all: test build
 build:
@@ -37,9 +38,6 @@ deps:
 release:
 ifndef GITHUB_TOKEN
 	$(error GITHUB_TOKEN is not defined)
-endif
-ifndef VERSION
-	$(error VERSION is not defined)
 endif
 	git commit -am 'Update version to $(VERSION)'||echo clean
 	git tag -a $(VERSION) -m '$(VERSION)'
