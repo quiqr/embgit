@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.2.4
+
+- release script
+
 ## 0.2.1
 
 - get fingerprint from private key

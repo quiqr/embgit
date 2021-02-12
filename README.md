@@ -2,6 +2,8 @@
 
 Embgit is a [PoppyGo](https://poppygo.io) project.
 
+<img src="https://poppygo.io/images/logo-nav.svg" width=200 />
+
 Embgit is an minimal git client made in go. It's main goals are:
 
 - fat binary, dependancy free
@@ -9,13 +11,25 @@ Embgit is an minimal git client made in go. It's main goals are:
 - clone, add, commit, push
 - use ssh-keys for identification
 
-# Features
+# Usage
+NAME:
+   embgit - A new cli application
 
-- [x] git clone
-- [x] git add
-- [x] git commit
-- [x] git push
-- [x] option for alternative ssh-key
+USAGE:
+   embgit [global options] command [command options] [arguments...]
+
+COMMANDS:
+   alladd       alladd
+   clone        complete a task on the list
+   commit       commit
+   fingerprint  get fingerprint from ssl key pair
+   keygen       create passwordless ssl key pair
+   push         push to remote
+   version      display version
+   help, h      Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h  show help (default: false)
 
 ## Build
 
@@ -26,4 +40,9 @@ make build
 go get github.com/mitchellh/gox
 
 make buildx
+
+## Release info
+
+edit ```const version``` in ```main.go```
+```GITHUB_TOKEN=xxxxx make release```
 
