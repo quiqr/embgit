@@ -38,9 +38,12 @@ release:
 ifndef GITHUB_TOKEN
 	$(error GITHUB_TOKEN is not defined)
 endif
-	git commit -am 'Update version to $(version)'
-	git tag -a $(version) -m '$(version)'
-	git push origin $(version)
+ifndef VERSION
+	$(error VERSION is not defined)
+endif
+	git commit -am 'Update version to $(VERSION)'
+	git tag -a $(VERSION) -m '$(VERSION)'
+	git push origin $(VERSION)
 	goreleaser --rm-dist
 
 # Cross compilation
