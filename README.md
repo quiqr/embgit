@@ -1,15 +1,13 @@
 # EMBGIT
 
-Embgit is a [PoppyGo](https://poppygo.io) project.
-
-<img src="https://poppygo.io/images/logo-nav.svg" width=200 />
-
 Embgit is an minimal git client made in go. It's main goals are:
 
 - fat binary, dependancy free
 - support for all main platforms
 - clone, add, commit, push
 - use ssh-keys for identification
+
+Embgit is a <a href="https://poppygo.io"><img src="https://poppygo.io/images/logo-nav.svg" width=120 /></a> project.
 
 # Usage
 NAME:
