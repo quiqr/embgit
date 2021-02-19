@@ -261,7 +261,8 @@ func main() {
         Name:  "version",
         Usage: "display version",
         Action: func(c *cli.Context) error {
-          Info("embgit %s, Copyright PoppyGo B.V. 2020-2021, www.poppygo.io", version)
+          Info("embgit %s", version)
+          Info("Copyright PoppyGo B.V. 2020-2021")
           return nil
         },
       },
