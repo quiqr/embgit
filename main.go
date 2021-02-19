@@ -188,17 +188,7 @@ func main() {
       {
         Name:  "keygen",
         Usage: "create passwordless ssl key pair",
-        //        Flags: []cli.Flag{
-        //          &cli.StringFlag{
-        //            Name:  "filename",
-        //            Aliases: []string{"f"},
-        //            Usage: "alternative ssh-key from `FILE`",
-        //          }
-        //        },
         Action: func(c *cli.Context) error {
-          //directory := c.Args().Get(0)
-          //filename := c.String("filename"))
-
           savePrivateFileTo := "./id_rsa_pogo"
           savePublicFileTo := "./id_rsa_pogo.pub"
           bitSize := 4096
@@ -230,17 +220,36 @@ func main() {
           priv, err := ioutil.ReadFile(keyfilepath)
 
           block, _ := pem.Decode([]byte(priv))
-          if block == nil || block.Type != "RSA PRIVATE KEY" {
-            log.Fatal("failed to decode PEM block containing public key")
+          if block != nil {
+            if block.Type == "RSA PRIVATE KEY" {
+              key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+
+              publicKeyBytes, err := generatePublicKey(&key.PublicKey)
+              if err != nil {
+                log.Fatal("Failed to parse private key")
+              }
+
+              ppubk,_,_,_,err := ssh.ParseAuthorizedKey(publicKeyBytes);
+              f := ssh.FingerprintLegacyMD5(ppubk)
+              fmt.Printf("%s\n", f)
+
+            } else if block.Type == "OPENSSH PRIVATE KEY" {
+
+              key, err := ssh.ParsePrivateKey(priv)
+              if err != nil {
+                log.Fatal("Failed to parse private key")
+              }
+              publicKeyBytes := ssh.MarshalAuthorizedKey(key.PublicKey())
+
+              ppubk,_,_,_,err := ssh.ParseAuthorizedKey(publicKeyBytes);
+              f := ssh.FingerprintLegacyMD5(ppubk)
+              fmt.Printf("%s\n", f)
+            } else{
+              log.Fatal("failed to decode PEM block containing public key")
+            }
+          } else{
+              log.Fatal("nothing to decode")
           }
-          key, err := x509.ParsePKCS1PrivateKey(block.Bytes)
-
-          publicKeyBytes, err := generatePublicKey(&key.PublicKey)
-
-          ppubk,_,_,_,err := ssh.ParseAuthorizedKey(publicKeyBytes);
-          f := ssh.FingerprintLegacyMD5(ppubk)
-          fmt.Printf("%s\n", f)
-
           if err != nil {
             log.Fatal(err)
           }
