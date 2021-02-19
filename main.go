@@ -22,7 +22,7 @@ import (
   "crypto/x509"
   "encoding/pem"
 )
-const version = "v0.2.8"
+const version = "v0.2.9"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
@@ -261,8 +261,8 @@ func main() {
         Name:  "version",
         Usage: "display version",
         Action: func(c *cli.Context) error {
-          Info("embgit %s", version)
-          Info("Copyright PoppyGo B.V. 2020-2021")
+          fmt.Printf("embgit %s\n", version)
+          fmt.Printf("Copyright PoppyGo B.V. 2020-2021\n")
           return nil
         },
       },
