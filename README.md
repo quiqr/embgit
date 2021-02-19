@@ -43,6 +43,9 @@ make buildx
 
 ## Release info
 
-edit ```const version``` in ```main.go```
-```GITHUB_TOKEN=xxxxx make release```
+Edit ```const version``` in ```main.go```
+
+```
+GITHUB_TOKEN=xxxxx make release
+```
 
