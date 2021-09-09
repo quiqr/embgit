@@ -7,7 +7,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=embgit
 BINARY_UNIX=$(BINARY_NAME)_unix
-POPPYAPPDIR=~/cPoppyGo/poppygo-eletron-app
+POPPYAPPDIR=~/cPoppyGo/poppygo-electron-app
 VERSION := $(shell grep version main.go|head -n1 | tr -d \"|cut -dv -f3)
 
 all: test build
