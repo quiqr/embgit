@@ -22,7 +22,7 @@ import (
   "crypto/x509"
   "encoding/pem"
 )
-const version = "v0.2.9"
+const version = "v0.3.0"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
@@ -150,8 +150,38 @@ func main() {
           CheckIfError(err)
 
           Info("git add all new files")
-
           _, err = w.Add(".")
+          CheckIfError(err)
+
+          return nil
+        },
+      },
+      {
+        Name:  "pull",
+        Usage: "pull from remote",
+        Flags: []cli.Flag{
+          &cli.StringFlag{
+            Name:    "ssh-key",
+            Aliases: []string{"i"},
+            Usage:   "alternative ssh-key from `FILE`",
+          },
+          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
+        },
+        Action: func(c *cli.Context) error {
+          directory := c.Args().Get(0)
+          auth := setAuth(c.String("ssh-key"), c.Bool("insecure"))
+
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          Info("git pull")
+          // pull using default options
+          err = w.Pull(&git.PullOptions{
+            Auth: auth,
+          })
           CheckIfError(err)
 
           return nil
