@@ -7,7 +7,7 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 BINARY_NAME=embgit
 BINARY_UNIX=$(BINARY_NAME)_unix
-POPPYAPPDIR=~/cPoppyGo/poppygo-electron-app
+QUIQRAPPDIR=~/cQuiqr/quiqr-desktop
 VERSION := $(shell grep version main.go|head -n1 | tr -d \"|cut -dv -f3)
 
 all: test build
@@ -18,10 +18,10 @@ buildx:
 	gox -osarch="windows/amd64" ./
 	gox -osarch="darwin/amd64" ./
 
-cptopoppygopp:
-	cp embgit_darwin_amd64 $(POPPYAPPDIR)/resources/mac/embgit
-	cp embgit_windows_amd64.exe $(POPPYAPPDIR)/resources/win/embgit.exe
-	cp embgit_linux_amd64 $(POPPYAPPDIR)/resources/linux/embgit
+copy2quiqr:
+	cp embgit_darwin_amd64 $(QUIQRAPPDIR)/resources/mac/embgit
+	cp embgit_windows_amd64.exe $(QUIQRAPPDIR)/resources/win/embgit.exe
+	cp embgit_linux_amd64 $(QUIQRAPPDIR)/resources/linux/embgit
 
 test:
 	GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...

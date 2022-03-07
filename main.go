@@ -22,7 +22,7 @@ import (
   "crypto/x509"
   "encoding/pem"
 )
-const version = "v0.3.0"
+const version = "v0.3.3"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
@@ -81,6 +81,48 @@ func main() {
           return nil
         },
       },
+      {
+        Name: "reset_hard",
+        Usage: "commit",
+        Action: func(c *cli.Context) error {
+
+          directory := c.Args().Get(0)
+
+          Info("Hard reset in %s", directory)
+          r, err := git.PlainOpen(directory)
+          CheckIfError(err)
+
+          w, err := r.Worktree()
+          CheckIfError(err)
+
+          head, err := r.Head()
+          if err != nil {
+            return err
+          }
+
+          if err := w.Reset(&git.ResetOptions{
+            Mode:   git.HardReset,
+            Commit: head.Hash(),
+          }); err != nil {
+            return err
+          }
+
+//          commit, err := w.Commit(c.String("message"), &git.CommitOptions{
+            //All: c.Bool("all"),
+            //Author: &object.Signature{
+              //Name:  c.String("author-name"),
+              //Email: c.String("author-email"),
+              //When:  time.Now(),
+            //},
+          //})
+
+          CheckIfError(err)
+
+          return nil
+        },
+      },
+
+
       {
         Name: "commit",
         Flags: []cli.Flag{

@@ -7,9 +7,9 @@ Embgit is an minimal git client made in go. It's main goals are:
 - clone, add, commit, push
 - use ssh-keys for identification
 
-Embgit is a [PoppyGo](https://poppygo.io) project.
+Embgit is a [Quiqr](https://quiqr.org) project.
 
-<a href="https://poppygo.io"><img src="https://poppygo.io/images/logo-nav.svg" width=150 /></a>
+<a href="https://quiqr.org"><img src="https://book.quiqr.org/images/logo-nav.svg" width=150 /></a>
 
 # Usage
 NAME:
