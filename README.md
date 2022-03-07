@@ -9,7 +9,7 @@ Embgit is an minimal git client made in go. It's main goals are:
 
 Embgit is a [Quiqr](https://quiqr.org) project.
 
-<a href="https://quiqr.org"><img src="https://book.quiqr.org/images/logo-nav.svg" width=150 /></a>
+<a href="https://quiqr.org"><img src="https://book.quiqr.org/logo-nav.svg" width=150 /></a>
 
 # Usage
 NAME:
