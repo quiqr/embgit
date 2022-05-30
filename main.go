@@ -25,7 +25,7 @@ import (
 
   "encoding/pem"
 )
-const version = "v0.3.5"
+const version = "v0.3.6"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
