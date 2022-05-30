@@ -19,14 +19,15 @@ USAGE:
    embgit [global options] command [command options] [arguments...]
 
 COMMANDS:
-   alladd       alladd
-   clone        complete a task on the list
-   commit       commit
-   fingerprint  get fingerprint from ssl key pair
-   keygen       create passwordless ssl key pair
-   push         push to remote
-   version      display version
-   help, h      Shows a list of commands or help for one command
+   alladd        alladd
+   clone         complete a task on the list
+   commit        commit
+   fingerprint   get fingerprint from ssl key pair
+   keygen        create passwordless ssl key pair (RSA)
+   keygen_ecdsa  create passwordless ssl key pair (ECDSA needed for GitHub)
+   push          push to remote
+   version       display version
+   help, h       Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
    --help, -h  show help (default: false)

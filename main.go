@@ -20,9 +20,12 @@ import (
   "crypto/rand"
   "crypto/rsa"
   "crypto/x509"
+  "crypto/ecdsa"
+  "crypto/elliptic"
+
   "encoding/pem"
 )
-const version = "v0.3.4"
+const version = "v0.3.5"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
   //var auth transport.AuthMethod
@@ -60,7 +63,11 @@ func main() {
             Aliases: []string{"i"},
             Usage:   "alternative ssh-key from `FILE`",
           },
-          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
+          &cli.BoolFlag{
+            Name: "insecure",
+            Aliases: []string{"s"},
+            Usage:   "skip host key validation",
+          },
         },
         Action: func(c *cli.Context) error {
 
@@ -207,7 +214,11 @@ func main() {
             Aliases: []string{"i"},
             Usage:   "alternative ssh-key from `FILE`",
           },
-          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
+          &cli.BoolFlag{
+            Name: "insecure",
+            Aliases: []string{"s"},
+            Usage:   "skip host key validation",
+          },
         },
         Action: func(c *cli.Context) error {
           directory := c.Args().Get(0)
@@ -238,7 +249,11 @@ func main() {
             Aliases: []string{"i"},
             Usage:   "alternative ssh-key from `FILE`",
           },
-          &cli.BoolFlag{Name: "insecure", Aliases: []string{"s"}},
+          &cli.BoolFlag{
+            Name: "insecure",
+            Aliases: []string{"s"},
+            Usage:   "skip host key validation",
+          },
         },
         Action: func(c *cli.Context) error {
           directory := c.Args().Get(0)
@@ -276,6 +291,32 @@ func main() {
           return nil
         },
       },
+
+      {
+        Name:  "keygen_ecdsa",
+        Usage: "create passwordless ecdsa ssl key pair",
+        Action: func(c *cli.Context) error {
+          savePrivateFileTo := "./id_ecdsa_quiqr"
+          savePublicFileTo := "./id_ecdsa_quiqr.pub"
+          //bitSize := 4096
+
+          //privateKey, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+          //pubKeyBytes := ssh.MarshalAuthorizedKey(privateKey.PublicKey)
+
+          privateKey, err := ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
+          publicKey := &privateKey.PublicKey
+          privateKeyBytes, _ := encodeECDSAToPEM(privateKey, publicKey)
+          publicKeyBytes, err := generatePublicKeyECDSA(&privateKey.PublicKey)
+
+          err = writeKeyToFile(privateKeyBytes, savePrivateFileTo)
+          err = writeKeyToFile([]byte(publicKeyBytes), savePublicFileTo)
+
+          CheckIfError(err)
+
+          return nil
+        },
+      },
+
       {
         Name:  "fingerprint",
         Usage: "get fingerprint from ssl key pair",
@@ -415,6 +456,17 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
   return privatePEM
 }
 
+
+func encodeECDSAToPEM(privateKey *ecdsa.PrivateKey, publicKey *ecdsa.PublicKey) ([]byte, []byte) {
+  x509Encoded, _ := x509.MarshalECPrivateKey(privateKey)
+  pemEncoded := pem.EncodeToMemory(&pem.Block{Type: "EC PRIVATE KEY", Bytes: x509Encoded})
+
+  x509EncodedPub, _ := x509.MarshalPKIXPublicKey(publicKey)
+  pemEncodedPub := pem.EncodeToMemory(&pem.Block{Type: "EC PUBLIC KEY", Bytes: x509EncodedPub})
+
+  return pemEncoded, pemEncodedPub
+}
+
 // generatePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
 // returns in the format "ssh-rsa ..."
 func generatePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
@@ -429,6 +481,17 @@ func generatePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
   return pubKeyBytes, nil
 }
 
+func generatePublicKeyECDSA(privatekey *ecdsa.PublicKey) ([]byte, error) {
+  publicKey, err := ssh.NewPublicKey(privatekey)
+  if err != nil {
+    return nil, err
+  }
+
+  pubKeyBytes := ssh.MarshalAuthorizedKey(publicKey)
+
+  log.Println("Public key generated")
+  return pubKeyBytes, nil
+}
 // writePemToFile writes keys to a file
 func writeKeyToFile(keyBytes []byte, saveFileTo string) error {
   err := ioutil.WriteFile(saveFileTo, keyBytes, 0600)
