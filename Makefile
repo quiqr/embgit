@@ -8,15 +8,16 @@ GOGET=$(GOCMD) get
 BINARY_NAME=embgit
 BINARY_UNIX=$(BINARY_NAME)_unix
 QUIQRAPPDIR=~/cQuiqr/quiqr-desktop
-VERSION := $(shell grep version main.go|head -n1 | tr -d \"|cut -dv -f3)
+VERSION := $(shell grep version ./src/main.go|head -n1 | tr -d \"|cut -dv -f3)
 
 all: test build
 build:
-	GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v
+	GO111MODULE=$(GO111MODULE) $(GOBUILD) -o $(BINARY_NAME) -v ./src
 buildx:
-	gox -osarch="linux/amd64" ./
-	gox -osarch="windows/amd64" ./
-	gox -osarch="darwin/amd64" ./
+	gox -osarch="linux/amd64" -output=embgit ./src
+	gox -osarch="windows/amd64" -output=embgit ./src
+	gox -osarch="darwin/amd64" -output=embgit ./src
+
 
 copy2quiqr:
 	cp embgit_darwin_amd64 $(QUIQRAPPDIR)/resources/mac/embgit
@@ -24,13 +25,13 @@ copy2quiqr:
 	cp embgit_linux_amd64 $(QUIQRAPPDIR)/resources/linux/embgit
 
 test:
-	GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./...
+	GO111MODULE=$(GO111MODULE) $(GOTEST) -v ./src/...
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)*
 	rm -f $(BINARY_UNIX)
 run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./...
+	$(GOBUILD) -o $(BINARY_NAME) -v ./src/...
 	./$(BINARY_NAME)
 deps:
 	$(GOGET) github.com/urfave/cli/v2
