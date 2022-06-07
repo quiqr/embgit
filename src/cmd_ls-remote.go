@@ -1,9 +1,9 @@
 package main
 import (
   "github.com/urfave/cli/v2"
-  "gopkg.in/src-d/go-git.v4"
-  "gopkg.in/src-d/go-git.v4/config"
-  "gopkg.in/src-d/go-git.v4/storage/memory"
+  "github.com/go-git/go-git/v5"
+  "github.com/go-git/go-git/v5/config"
+  "github.com/go-git/go-git/v5/storage/memory"
   "log"
 )
 
@@ -62,12 +62,13 @@ func cmdLsRemote() *cli.Command {
         }
       }
 
+      log.Printf("Refs found: %v", refs)
+
       if len(tags) == 0 {
         log.Println("No tags!")
         return nil
       }
 
-      log.Printf("Tags found: %v", tags)
 
 
       return nil

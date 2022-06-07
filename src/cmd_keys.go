@@ -5,8 +5,6 @@ import (
 
   "github.com/urfave/cli/v2"
   "golang.org/x/crypto/ssh"
-  //ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
-
 
   "fmt"
   "io/ioutil"

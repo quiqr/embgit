@@ -7,16 +7,14 @@ import (
   "os"
   "sort"
   "strings"
-//  "time"
 
   "github.com/urfave/cli/v2"
-//  "gopkg.in/src-d/go-git.v4"
-//  "gopkg.in/src-d/go-git.v4/plumbing/object"
-  "gopkg.in/src-d/go-git.v4/plumbing/transport"
+  "github.com/go-git/go-git/v5/plumbing/transport"
 
   "golang.org/x/crypto/ssh"
-  ssh2 "gopkg.in/src-d/go-git.v4/plumbing/transport/ssh"
+  ssh2 "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
+
 const version = "v0.3.7"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
@@ -59,18 +57,16 @@ func main() {
   }
 
   app.Commands = append(app.Commands,
-
     cmdAddAll(),
     cmdClone(),
     cmdCommit(),
-    cmdLsRemote(),
     cmdPull(),
     cmdPush(),
     cmdResetHard(),
-
     cmdFingerprint(),
     cmdKeyGen(),
-    cmdKeyGenEcdsa() )
+    cmdKeyGenEcdsa(),
+    cmdLsRemote())
 
   sort.Sort(cli.FlagsByName(app.Flags))
   sort.Sort(cli.CommandsByName(app.Commands))
