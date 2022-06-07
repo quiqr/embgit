@@ -7,8 +7,8 @@ import (
 func cmdAddAll() *cli.Command {
 
   return &cli.Command{
-    Name:  "all_add",
-    Usage: "all_add",
+    Name:  "add_all",
+    Usage: "add_all",
     Action: func(c *cli.Context) error {
 
       directory := c.Args().Get(0)
