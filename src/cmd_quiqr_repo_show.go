@@ -2,7 +2,7 @@ package main
 
 import (
   "fmt"
-  "github.com/davecgh/go-spew/spew"
+  //"github.com/davecgh/go-spew/spew"
   "path/filepath"
   "github.com/spf13/viper"
   "encoding/json"
@@ -95,7 +95,7 @@ func showCase(url string){
       imgExts := []string{"jpg", "png", "git", "jpeg"}
       extension := strings.ToLower(strings.TrimLeft(filepath.Ext(f.Name), "."))
       if(slices.Contains(imgExts, extension)){
-        spew.Dump(f.Name)
+        //spew.Dump(f.Name)
         contents, _ := f.Contents()
         contentsBytes := []byte(contents)
 
