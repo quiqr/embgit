@@ -1,3 +1,8 @@
+# embgit 4.1, June 10, 2022
+
+- rename quiqr_repo_show to repo_show_quiqrsite
+- add repo_show_hugotheme
+
 # embgit 4.0, June 7, 2022
 
 - rename alladd to add_all

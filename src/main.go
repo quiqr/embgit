@@ -66,7 +66,8 @@ func main() {
     cmdFingerprint(),
     cmdKeyGen(),
     cmdKeyGenEcdsa(),
-    cmdLsRemote())
+    cmdRepoShowHugotheme(),
+    cmdRepoShowQuiqrsite())
 
   sort.Sort(cli.FlagsByName(app.Flags))
   sort.Sort(cli.CommandsByName(app.Commands))

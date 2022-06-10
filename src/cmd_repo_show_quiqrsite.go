@@ -18,7 +18,7 @@ import (
 
 )
 
-type responseDictType struct {
+type responseQuiqrsiteDictType struct {
   HugoVersion string
   HugoTheme string
   QuiqrFormsEndPoints int
@@ -27,22 +27,22 @@ type responseDictType struct {
 }
 
 
-func cmdLsRemote() *cli.Command {
+func cmdRepoShowQuiqrsite() *cli.Command {
 
   return &cli.Command{
-    Name: "quiqr_repo_show",
-    Usage: "quiqr_repo_show",
+    Name: "repo_show_quiqrsite",
+    Usage: "repo_show_quiqrsite",
     Action: func(c *cli.Context) error {
 
       url := c.Args().Get(0)
-      showCase(url)
+      showCaseQuiqrsite(url)
       return nil
     },
   }
 }
 
 
-func showCase(url string){
+func showCaseQuiqrsite(url string){
 
   r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
     URL: url,
@@ -138,7 +138,7 @@ func showCase(url string){
     return nil
   })
 
-  responseDict := &responseDictType{
+  responseDict := &responseQuiqrsiteDictType{
     HugoVersion: hugover,
     HugoTheme: hugotheme,
     QuiqrFormsEndPoints: formEndPoints,
