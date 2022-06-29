@@ -19,11 +19,20 @@ import (
 )
 
 type responseQuiqrsiteDictType struct {
-  HugoVersion string
-  HugoTheme string
-  QuiqrFormsEndPoints int
-  QuiqrModel string
-  Screenshot string
+  HugoVersion                string
+  HugoTheme                  string
+  QuiqrFormsEndPoints        int
+  QuiqrModel                 string
+  QuiqrEtalageName           string
+  QuiqrEtalageDescription    string
+  QuiqrEtalageHomepage       string
+  QuiqrEtalageDemoUrl        string
+  QuiqrEtalageLicense        string
+  QuiqrEtalageLicenseURL     string
+  QuiqrEtalageAuthor         string
+  QuiqrEtalageAuthorHomepage string
+  QuiqrEtalageScreenshots    []string
+  Screenshot                 string
 }
 
 
@@ -32,17 +41,24 @@ func cmdRepoShowQuiqrsite() *cli.Command {
   return &cli.Command{
     Name: "repo_show_quiqrsite",
     Usage: "repo_show_quiqrsite",
+    Flags: []cli.Flag{
+      &cli.BoolFlag{
+        Name:    "skip-base64-screenshot",
+        Aliases: []string{"S"},
+        Usage:   "do not output 1st found screenshot image",
+      },
+    },
     Action: func(c *cli.Context) error {
-
+      skipBase64Screenshot := c.Bool("skip-base64-screenshot")
       url := c.Args().Get(0)
-      showCaseQuiqrsite(url)
+      showCaseQuiqrsite(url, skipBase64Screenshot)
       return nil
     },
   }
 }
 
 
-func showCaseQuiqrsite(url string){
+func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
 
   r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions{
     URL: url,
@@ -59,11 +75,20 @@ func showCaseQuiqrsite(url string){
   tree, err := commit.Tree()
   CheckIfError(err)
 
-  var hugover string;
-  var hugotheme string;
-  formEndPoints := 0;
-  var screenshot1 string;
-  var quiqrModel string;
+  var hugover string
+  var hugotheme string
+  formEndPoints := 0
+  screenshot1 := ""
+  var quiqrModel string
+  var quiqrEtalageName string
+  var quiqrEtalageDescription string
+  var quiqrEtalageHomepage string
+  var quiqrEtalageDemoURL string
+  var quiqrEtalageLicense string
+  var quiqrEtalageLicenseURL string
+  var quiqrEtalageAuthor string
+  var quiqrEtalageAuthorHomepage string
+  quiqrEtalageScreenshots := []string{}
 
   tree.Files().ForEach(func(f *object.File) error {
 
@@ -76,6 +101,21 @@ func showCaseQuiqrsite(url string){
       viper.ReadConfig(bytes.NewBuffer([]byte(contents)))
       hugover, _ = viper.Get("hugover").(string)
       quiqrModel = "base"
+    }
+
+    if(strings.HasPrefix(f.Name, "quiqr/etalage/template.json")){
+      contents, _ := f.Contents()
+      viper.SetConfigType("json")
+      viper.ReadConfig(bytes.NewBuffer([]byte(contents)))
+
+      quiqrEtalageName, _           = viper.Get("name").(string)
+      quiqrEtalageDescription, _    = viper.Get("description").(string)
+      quiqrEtalageHomepage, _       = viper.Get("homepage").(string)
+      quiqrEtalageDemoURL, _        = viper.Get("demoURL").(string)
+      quiqrEtalageLicense, _        = viper.Get("license").(string)
+      quiqrEtalageLicenseURL, _     = viper.Get("licenseURL").(string)
+      quiqrEtalageAuthor, _         = viper.Get("author").(string)
+      quiqrEtalageAuthorHomepage, _ = viper.Get("authorHomepage").(string)
     }
 
     if(strings.HasPrefix(f.Name, "quiqr/model/includes/singles.")){
@@ -91,36 +131,34 @@ func showCaseQuiqrsite(url string){
     }
 
     if(strings.HasPrefix(f.Name, "quiqr/etalage/screenshots/")){
+      quiqrEtalageScreenshots = append(quiqrEtalageScreenshots, f.Name)
 
-      imgExts := []string{"jpg", "png", "git", "jpeg"}
-      extension := strings.ToLower(strings.TrimLeft(filepath.Ext(f.Name), "."))
-      if(slices.Contains(imgExts, extension)){
-        //spew.Dump(f.Name)
-        contents, _ := f.Contents()
-        contentsBytes := []byte(contents)
+      if(!skipBase64Screenshot && screenshot1 == ""){
 
+        imgExts := []string{"jpg", "png", "git", "jpeg"}
+        extension := strings.ToLower(strings.TrimLeft(filepath.Ext(f.Name), "."))
+        if(slices.Contains(imgExts, extension)){
+          //spew.Dump(f.Name)
+          contents, _ := f.Contents()
+          contentsBytes := []byte(contents)
 
-        var base64Encoding string
+          var base64Encoding string
 
-        // Determine the content type of the image file
-        mimeType := http.DetectContentType(contentsBytes)
+          mimeType := http.DetectContentType(contentsBytes)
 
-        // Prepend the appropriate URI scheme header depending
-        // on the MIME type
-        switch mimeType {
-        case "image/jpeg":
-          base64Encoding += "data:image/jpeg;base64,"
-        case "image/png":
-          base64Encoding += "data:image/png;base64,"
+          switch mimeType {
+          case "image/jpeg":
+            base64Encoding += "data:image/jpeg;base64,"
+          case "image/png":
+            base64Encoding += "data:image/png;base64,"
+          }
+
+          base64Encoding += toBase64(contentsBytes)
+          screenshot1 = base64Encoding
         }
-
-        // Append the base64 encoded output
-        base64Encoding += toBase64(contentsBytes)
-
-        // Print the full base64 representation of the image
-        screenshot1 = base64Encoding
       }
     }
+
 
     if(strings.HasPrefix(f.Name, "quiqr/forms/")){
       formEndPoints++
@@ -139,10 +177,22 @@ func showCaseQuiqrsite(url string){
   })
 
   responseDict := &responseQuiqrsiteDictType{
-    HugoVersion: hugover,
-    HugoTheme: hugotheme,
-    QuiqrFormsEndPoints: formEndPoints,
-    QuiqrModel: quiqrModel,
+    HugoVersion:                 hugover,
+    HugoTheme:                   hugotheme,
+
+    QuiqrFormsEndPoints:         formEndPoints,
+    QuiqrModel:                  quiqrModel,
+
+    QuiqrEtalageName:           quiqrEtalageName,
+    QuiqrEtalageDescription:    quiqrEtalageDescription,
+    QuiqrEtalageHomepage:       quiqrEtalageHomepage,
+    QuiqrEtalageDemoUrl:        quiqrEtalageDemoURL,
+    QuiqrEtalageLicense:        quiqrEtalageLicense,
+    QuiqrEtalageLicenseURL:     quiqrEtalageLicenseURL,
+    QuiqrEtalageAuthor:         quiqrEtalageAuthor,
+    QuiqrEtalageAuthorHomepage: quiqrEtalageAuthorHomepage,
+    QuiqrEtalageScreenshots:    quiqrEtalageScreenshots,
+
     Screenshot: screenshot1,
   }
   responseJson, _ := json.Marshal(responseDict)
