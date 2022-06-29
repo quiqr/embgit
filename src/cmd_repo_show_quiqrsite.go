@@ -33,6 +33,7 @@ type responseQuiqrsiteDictType struct {
   QuiqrEtalageAuthorHomepage string
   QuiqrEtalageScreenshots    []string
   Screenshot                 string
+  ScreenshotImageType        string
 }
 
 
@@ -78,7 +79,8 @@ func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
   var hugover string
   var hugotheme string
   formEndPoints := 0
-  screenshot1 := ""
+  screenshotBase64 := ""
+  var screenshotBase64ImageType string
   var quiqrModel string
   var quiqrEtalageName string
   var quiqrEtalageDescription string
@@ -133,9 +135,9 @@ func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
     if(strings.HasPrefix(f.Name, "quiqr/etalage/screenshots/")){
       quiqrEtalageScreenshots = append(quiqrEtalageScreenshots, f.Name)
 
-      if(!skipBase64Screenshot && screenshot1 == ""){
+      if(!skipBase64Screenshot && screenshotBase64 == ""){
 
-        imgExts := []string{"jpg", "png", "git", "jpeg"}
+        imgExts := []string{"jpg", "png", "gif", "jpeg"}
         extension := strings.ToLower(strings.TrimLeft(filepath.Ext(f.Name), "."))
         if(slices.Contains(imgExts, extension)){
           //spew.Dump(f.Name)
@@ -149,12 +151,17 @@ func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
           switch mimeType {
           case "image/jpeg":
             base64Encoding += "data:image/jpeg;base64,"
+            screenshotBase64ImageType = "jpg"
+          case "image/gif":
+            base64Encoding += "data:image/gif;base64,"
+            screenshotBase64ImageType = "gif"
           case "image/png":
             base64Encoding += "data:image/png;base64,"
+            screenshotBase64ImageType = "png"
           }
 
           base64Encoding += toBase64(contentsBytes)
-          screenshot1 = base64Encoding
+          screenshotBase64 = base64Encoding
         }
       }
     }
@@ -177,12 +184,11 @@ func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
   })
 
   responseDict := &responseQuiqrsiteDictType{
-    HugoVersion:                 hugover,
-    HugoTheme:                   hugotheme,
 
-    QuiqrFormsEndPoints:         formEndPoints,
-    QuiqrModel:                  quiqrModel,
-
+    HugoVersion:                hugover,
+    HugoTheme:                  hugotheme,
+    QuiqrFormsEndPoints:        formEndPoints,
+    QuiqrModel:                 quiqrModel,
     QuiqrEtalageName:           quiqrEtalageName,
     QuiqrEtalageDescription:    quiqrEtalageDescription,
     QuiqrEtalageHomepage:       quiqrEtalageHomepage,
@@ -192,8 +198,9 @@ func showCaseQuiqrsite(url string, skipBase64Screenshot bool){
     QuiqrEtalageAuthor:         quiqrEtalageAuthor,
     QuiqrEtalageAuthorHomepage: quiqrEtalageAuthorHomepage,
     QuiqrEtalageScreenshots:    quiqrEtalageScreenshots,
+    Screenshot:                 screenshotBase64,
+    ScreenshotImageType:        screenshotBase64ImageType,
 
-    Screenshot: screenshot1,
   }
   responseJson, _ := json.Marshal(responseDict)
   fmt.Println(string(responseJson))
