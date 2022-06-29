@@ -15,7 +15,7 @@ import (
   ssh2 "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 
-const version = "v0.5.1"
+const version = "v0.5.2"
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
 
