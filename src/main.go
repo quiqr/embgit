@@ -60,6 +60,7 @@ func main() {
     cmdClone(),
     cmdCommit(),
     cmdLog(),
+    cmdGit2test(),
     cmdPull(),
     cmdPush(),
     cmdResetHard(),
