@@ -29,7 +29,6 @@ func cmdLog() *cli.Command {
     },
     Action: func(c *cli.Context) error {
 
-
       url := c.Args().Get(0)
       directory := c.Args().Get(1)
       auth := setAuth(c.String("ssh-key"), c.Bool("insecure"))
@@ -44,7 +43,6 @@ func cmdLog() *cli.Command {
       })
 
       CheckIfError(err)
-
 
       // Gets the HEAD history from HEAD, just like this command:
       Info("git log")
