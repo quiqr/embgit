@@ -16,6 +16,14 @@ import (
 )
 
 const version = "v0.5.2"
+const DateFormat = "Mon Jan 02 15:04:05 2006 -0700"
+
+type jsonCommitEntry struct {
+  Message string `json:"message"`
+  Author  string `json:"author"`
+  Date    string `json:"date"`
+  Ref    string `json:"ref"`
+}
 
 func setAuth(keyfilepath string, ignoreHostkey bool) transport.AuthMethod {
 
@@ -59,8 +67,8 @@ func main() {
     cmdAddAll(),
     cmdClone(),
     cmdCommit(),
-    cmdLog(),
-    cmdGit2test(),
+    cmdLogLocal(),
+    cmdLogRemote(),
     cmdPull(),
     cmdPush(),
     cmdResetHard(),

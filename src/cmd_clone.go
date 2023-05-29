@@ -18,11 +18,11 @@ func cmdClone() *cli.Command {
         Aliases: []string{"i"},
         Usage:   "alternative ssh-key from `FILE`",
       },
-      &cli.StringFlag{
-        Name:    "branch",
-        Aliases: []string{"b"},
-        Usage:   "other then default branch",
-      },
+//      &cli.StringFlag{
+//        Name:    "branch",
+//        Aliases: []string{"b"},
+//        Usage:   "other then default branch",
+//      },
       &cli.BoolFlag{
         Name: "insecure",
         Aliases: []string{"s"},
