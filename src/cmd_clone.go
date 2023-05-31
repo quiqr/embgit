@@ -11,7 +11,7 @@ func cmdClone() *cli.Command {
 
   return &cli.Command{
     Name:  "clone",
-    Usage: "complete a task on the list",
+    Usage: "Clone a repo",
     Flags: []cli.Flag{
       &cli.StringFlag{
         Name:    "ssh-key",

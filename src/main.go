@@ -67,6 +67,7 @@ func main() {
     cmdAddAll(),
     cmdClone(),
     cmdCommit(),
+    cmdCheckout(),
     cmdLogLocal(),
     cmdLogRemote(),
     cmdPull(),
