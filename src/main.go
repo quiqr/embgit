@@ -15,7 +15,7 @@ import (
   ssh2 "github.com/go-git/go-git/v5/plumbing/transport/ssh"
 )
 
-const version = "v0.6.1"
+const version = "v0.6.2"
 const DateFormat = "Mon Jan 02 15:04:05 2006 -0700"
 
 type jsonCommitEntry struct {
