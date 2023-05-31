@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.2 - 30 May
+- fix checkout missing dir
+
 ## 0.6.1 - 30 May
 - minimal checkout command
 - some securiy updates

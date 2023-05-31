@@ -20,8 +20,9 @@ func cmdCheckout() *cli.Command {
     },
     Action: func(c *cli.Context) error {
 
-      directory := c.Args().Get(1)
+      directory := c.Args().Get(0)
       ref := c.String("ref")
+      Info("git checkout in dir %s", directory)
 
       r, err := git.PlainOpen(directory)
       CheckIfError(err)
