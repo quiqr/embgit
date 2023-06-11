@@ -19,8 +19,9 @@ func cmdAddAll() *cli.Command {
       w, err := r.Worktree()
       CheckIfError(err)
 
-      Info("git add all new files")
-      _, err = w.Add(".")
+      Info("git add all new/mod/deleted files")
+      Info("in dir: %s", directory)
+      err = w.AddWithOptions(&git.AddOptions{ All: true})
       CheckIfError(err)
 
       return nil
