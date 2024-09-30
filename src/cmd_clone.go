@@ -9,6 +9,7 @@ import (
 
 func cmdClone() *cli.Command {
 
+
   return &cli.Command{
     Name:  "clone",
     Usage: "Clone a repo",
@@ -17,6 +18,12 @@ func cmdClone() *cli.Command {
         Name:    "ssh-key",
         Aliases: []string{"i"},
         Usage:   "alternative ssh-key from `FILE`",
+      },
+      &cli.IntFlag{
+        Name:    "depth",
+        Aliases: []string{"d"},
+        Usage:   "depth is the amount of commits fropm history",
+        Value:   3,
       },
 //      &cli.StringFlag{
 //        Name:    "branch",
@@ -35,11 +42,13 @@ func cmdClone() *cli.Command {
       directory := c.Args().Get(1)
       auth := setAuth(c.String("ssh-key"), c.Bool("insecure"))
       //branch := c.String("branch")
+      depth := c.Int("depth")
 
       Info("git clone %s %s", url, directory)
 
       _, err2 := git.PlainClone(directory, false, &git.CloneOptions{
         URL:      url,
+        Depth:    depth,
         Progress: os.Stdout,
         Auth:     auth,
       })
