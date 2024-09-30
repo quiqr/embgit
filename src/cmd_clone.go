@@ -44,7 +44,7 @@ func cmdClone() *cli.Command {
       //branch := c.String("branch")
       depth := c.Int("depth")
 
-      Info("git clone %s %s", url, directory)
+      Info("git clone %s %s %d", url, directory, depth)
 
       _, err2 := git.PlainClone(directory, false, &git.CloneOptions{
         URL:      url,

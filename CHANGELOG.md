@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.6.4 - 30 Sept 2024
+- add depth flag (defaults 3)
+
 ## 0.6.3 - 12 juni 2023
 - stage deleted files
 
